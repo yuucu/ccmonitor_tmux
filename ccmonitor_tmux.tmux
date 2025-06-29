@@ -45,15 +45,22 @@ main() {
         set_tmux_option "status-interval" "$update_interval"
     fi
     
-    # Get current status-right
-    local status_right=$(get_tmux_option "status-right" "")
+    # Create ccmonitor status string as a variable
+    local ccmonitor_status="#[fg=colour2]CC:#($script_path)#[default]"
     
-    # Add ccmonitor to status-right if not already there
-    if [[ "$status_right" != *"ccmonitor"* ]]; then
-        if [ -z "$status_right" ]; then
-            set_tmux_option "status-right" "#[fg=colour2]CC:#($script_path)#[default]"
-        else
-            set_tmux_option "status-right" "$status_right #[fg=colour2]CC:#($script_path)#[default]"
+    # Set the ccmonitor status string as a tmux global variable
+    set_tmux_option "@ccmonitor_status" "$ccmonitor_status"
+    
+    # Optionally set status-right if enabled (default: false)
+    local auto_status=$(get_tmux_option "@ccmonitor_auto_status" "false")
+    if [ "$auto_status" = "true" ]; then
+        local status_right=$(get_tmux_option "status-right" "")
+        if [[ "$status_right" != *"ccmonitor"* ]]; then
+            if [ -z "$status_right" ]; then
+                set_tmux_option "status-right" "$ccmonitor_status"
+            else
+                set_tmux_option "status-right" "$status_right $ccmonitor_status"
+            fi
         fi
     fi
 }

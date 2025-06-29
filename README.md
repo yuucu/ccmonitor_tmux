@@ -51,7 +51,30 @@ set -g @ccmonitor_interval "3"
 
 # Display format: simple or fancy (default: simple)
 set -g @ccmonitor_display_format "fancy"
+
+# Automatically add to status-right (default: false)
+# If false, you need to manually add the status variable to your status-right
+set -g @ccmonitor_auto_status "false"
 ```
+
+### Manual Status Bar Configuration
+
+By default, this plugin provides the Claude Code status as a tmux variable `@ccmonitor_status` that you can use in your status bar configuration. This gives you full control over where and how to display it.
+
+To add the Claude Code monitor to your status bar, use the variable in your `~/.tmux.conf`:
+
+```bash
+# Example: Add to the right side of status bar
+set -g status-right '#{@ccmonitor_status} | %Y-%m-%d %H:%M'
+
+# Example: Add to the left side of status bar
+set -g status-left '#{@ccmonitor_status} | #S'
+
+# Example: Custom formatting
+set -g status-right 'Claude: #{@ccmonitor_status} | CPU: #{cpu_percentage}'
+```
+
+If you prefer automatic setup, set `@ccmonitor_auto_status` to `"true"` and the plugin will automatically add the status to your `status-right`.
 
 ## Display Formats
 
@@ -66,7 +89,7 @@ set -g @ccmonitor_display_format "fancy"
 
 ## Usage
 
-The plugin automatically adds the Claude Code status to your tmux status bar. The format will be:
+Once configured, the Claude Code status will appear in your tmux status bar showing:
 ```
 CC:2/4
 ```
@@ -74,6 +97,8 @@ CC:2/4
 Where:
 - `2` = Number of active Claude Code processes (CPU > threshold)
 - `4` = Total number of Claude Code processes
+
+The status is available as `#{@ccmonitor_status}` variable that you can place anywhere in your status bar configuration.
 
 ## Manual Testing
 
