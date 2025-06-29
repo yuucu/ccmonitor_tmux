@@ -74,6 +74,8 @@ set -g status-right 'Claude Active: #{@ccmonitor_active}'
 
 ## Display Formats
 
+The `display_format` configuration only affects the `status` command output:
+
 ### Simple Format (default)
 - Shows `active/total` (e.g., `2/4`)
 
@@ -82,6 +84,8 @@ set -g status-right 'Claude Active: #{@ccmonitor_active}'
   - 🔴 `0/0` - No processes running
   - ⚪ `0/2` - Processes running but none active
   - 🟢 `2/4` - Some processes are active
+
+**Note:** The `@ccmonitor_active` and `@ccmonitor_total` variables always return plain numbers regardless of the display format setting.
 
 ## Usage
 
