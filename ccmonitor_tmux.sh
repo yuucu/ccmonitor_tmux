@@ -69,6 +69,15 @@ main() {
         "total")
             echo $(get_claude_process_count)
             ;;
+        "formatted")
+            local total=$(get_claude_process_count)
+            local active=$(get_active_claude_count $CPU_THRESHOLD)
+            local format=${CCMONITOR_FORMAT:-"CC:{active}/{total}"}
+            # Replace placeholders with actual values
+            format="${format//\{active\}/$active}"
+            format="${format//\{total\}/$total}"
+            echo "$format"
+            ;;
         "info")
             echo "Claude Code Process Information:"
             echo "================================"
@@ -88,7 +97,7 @@ main() {
             ;;
         "help")
             echo "Claude Code Monitor - Usage:"
-            echo "  $0 [status|active|total|info|test|help]"
+            echo "  $0 [status|active|total|formatted|info|test|help]"
             echo ""
             echo "Environment Variables:"
             echo "  CCMONITOR_CPU_THRESHOLD - CPU threshold for active processes (default: 1.0)"

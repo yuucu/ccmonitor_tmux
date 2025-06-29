@@ -9,6 +9,7 @@ CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEFAULT_INTERVAL="5"
 DEFAULT_CPU_THRESHOLD="1.0"
 DEFAULT_DISPLAY_FORMAT="simple"
+DEFAULT_FORMAT="CC:{active}/{total}"
 
 # Get tmux option with default fallback
 get_tmux_option() {
@@ -29,15 +30,44 @@ set_tmux_option() {
     tmux set-option -g "$option" "$value"
 }
 
+# Do interpolation of status string
+do_interpolation() {
+    local string="$1"
+    local active_value="$2"
+    local total_value="$3"
+    
+    # Simple interpolation for all placeholders
+    string="${string//\#{ccmonitor_active\}/$active_value}"
+    string="${string//\#{ccmonitor_total\}/$total_value}"
+    string="${string//\#{ccmonitor_status\}/$active_value\/$total_value}"
+    
+    echo "$string"
+}
+
+# Update tmux option with interpolation
+update_tmux_option() {
+    local option="$1"
+    local option_value="$(get_tmux_option "$option" "")"
+    
+    # Get configuration
+    local cpu_threshold=$(get_tmux_option "@ccmonitor_cpu_threshold" "$DEFAULT_CPU_THRESHOLD")
+    local format=$(get_tmux_option "@ccmonitor_format" "$DEFAULT_FORMAT")
+    
+    # Build the command with format
+    local ccmonitor_cmd="CCMONITOR_CPU_THRESHOLD='$cpu_threshold' CCMONITOR_FORMAT='$format' $CURRENT_DIR/ccmonitor_tmux.sh"
+    
+    # Replace interpolations
+    local new_option_value="${option_value//\#{ccmonitor_active\}/#($ccmonitor_cmd active)}"
+    new_option_value="${new_option_value//\#{ccmonitor_total\}/#($ccmonitor_cmd total)}"
+    new_option_value="${new_option_value//\#{ccmonitor_status\}/#($ccmonitor_cmd formatted)}"
+    
+    set_tmux_option "$option" "$new_option_value"
+}
+
 # Main function to setup the plugin
 main() {
     # Get configuration options
     local update_interval=$(get_tmux_option "@ccmonitor_interval" "$DEFAULT_INTERVAL")
-    local cpu_threshold=$(get_tmux_option "@ccmonitor_cpu_threshold" "$DEFAULT_CPU_THRESHOLD")
-    local display_format=$(get_tmux_option "@ccmonitor_display_format" "$DEFAULT_DISPLAY_FORMAT")
-    
-    # Set script path with environment variables
-    local script_path="CCMONITOR_CPU_THRESHOLD='$cpu_threshold' CCMONITOR_DISPLAY_FORMAT='$display_format' $CURRENT_DIR/ccmonitor_tmux.sh status"
     
     # Update tmux status bar update interval
     local current_interval=$(get_tmux_option "status-interval" "15")
@@ -45,13 +75,9 @@ main() {
         set_tmux_option "status-interval" "$update_interval"
     fi
     
-    # Set script paths for active and total counts
-    local active_script="CCMONITOR_CPU_THRESHOLD='$cpu_threshold' CCMONITOR_DISPLAY_FORMAT='$display_format' $CURRENT_DIR/ccmonitor_tmux.sh active"
-    local total_script="CCMONITOR_CPU_THRESHOLD='$cpu_threshold' CCMONITOR_DISPLAY_FORMAT='$display_format' $CURRENT_DIR/ccmonitor_tmux.sh total"
-    
-    # Set tmux variables for active and total process counts
-    set_tmux_option "@ccmonitor_active" "#($active_script)"
-    set_tmux_option "@ccmonitor_total" "#($total_script)"
+    # Update status-left and status-right
+    update_tmux_option "status-left"
+    update_tmux_option "status-right"
 }
 
 # Load the plugin

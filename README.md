@@ -51,25 +51,52 @@ set -g @ccmonitor_interval "3"
 
 # Display format: simple or fancy (default: simple)
 set -g @ccmonitor_display_format "fancy"
+
+# Custom status format (default: "CC:{active}/{total}")
+# Available placeholders: {active}, {total}
+set -g @ccmonitor_format "🤖{active}/{total}"
 ```
 
 ### Status Bar Configuration
 
-This plugin provides two tmux variables for maximum flexibility:
-- `#{@ccmonitor_active}` - Number of active Claude Code processes (CPU > threshold)
-- `#{@ccmonitor_total}` - Total number of Claude Code processes
+The plugin automatically interpolates the following placeholders in your `status-left` and `status-right`:
 
-To add the Claude Code monitor to your status bar, use these variables in your `~/.tmux.conf`:
+- `#{ccmonitor_status}` - Shows formatted status (default: "CC:active/total")
+- `#{ccmonitor_active}` - Shows only active process count
+- `#{ccmonitor_total}` - Shows only total process count
+
+Just add these placeholders to your tmux configuration:
 
 ```bash
-# Example: Show as active/total format
-set -g status-right 'CC:#{@ccmonitor_active}/#{@ccmonitor_total} | %Y-%m-%d %H:%M'
+# Add to status-right
+set -g status-right '🤖#{ccmonitor_status} | %Y-%m-%d %H:%M'
 
-# Example: Custom formatting with colors
-set -g status-right '#[fg=green]Active: #{@ccmonitor_active}#[default] | Total: #{@ccmonitor_total}'
+# Or use individual values
+set -g status-right 'Claude: #{ccmonitor_active}/#{ccmonitor_total} | %H:%M'
 
-# Example: Only show active count
-set -g status-right 'Claude Active: #{@ccmonitor_active}'
+# Add to status-left
+set -g status-left '#{ccmonitor_status} | #S'
+```
+
+#### Customizing the Format
+
+You can customize the `#{ccmonitor_status}` format using the `@ccmonitor_format` option:
+
+```bash
+# Default format
+set -g @ccmonitor_format "CC:{active}/{total}"
+
+# With emoji
+set -g @ccmonitor_format "🤖{active}/{total}"
+
+# Verbose format
+set -g @ccmonitor_format "Claude: {active} active / {total} total"
+
+# Only show active count
+set -g @ccmonitor_format "Active: {active}"
+
+# With colors (tmux formatting)
+set -g @ccmonitor_format "#[fg=green]CC:{active}#[default]/{total}"
 ```
 
 ## Display Formats
@@ -85,16 +112,21 @@ The `display_format` configuration only affects the `status` command output:
   - ⚪ `0/2` - Processes running but none active
   - 🟢 `2/4` - Some processes are active
 
-**Note:** The `@ccmonitor_active` and `@ccmonitor_total` variables always return plain numbers regardless of the display format setting.
+**Note:** The `display_format` setting only affects the output of the `status` command when run directly from the command line.
 
 ## Usage
 
-Once configured, you can use the provided variables to display Claude Code process information:
+Once the plugin is loaded, it automatically replaces the placeholders in your status bar:
 
-- `#{@ccmonitor_active}` - Shows the number of active processes (e.g., `2`)
-- `#{@ccmonitor_total}` - Shows the total number of processes (e.g., `4`)
+- `#{ccmonitor_status}` - Formatted status using `@ccmonitor_format`
+- `#{ccmonitor_active}` - Raw number of active processes
+- `#{ccmonitor_total}` - Raw number of total processes
 
-These variables update automatically based on your configured interval.
+The `@ccmonitor_format` option supports these placeholders:
+- `{active}` - Number of active processes (CPU > threshold)
+- `{total}` - Total number of processes
+
+The status updates automatically based on your configured interval.
 
 ## Manual Testing
 
