@@ -45,24 +45,13 @@ main() {
         set_tmux_option "status-interval" "$update_interval"
     fi
     
-    # Create ccmonitor status string as a variable
-    local ccmonitor_status="#[fg=colour2]CC:#($script_path)#[default]"
+    # Set script paths for active and total counts
+    local active_script="CCMONITOR_CPU_THRESHOLD='$cpu_threshold' CCMONITOR_DISPLAY_FORMAT='$display_format' $CURRENT_DIR/ccmonitor_tmux.sh active"
+    local total_script="CCMONITOR_CPU_THRESHOLD='$cpu_threshold' CCMONITOR_DISPLAY_FORMAT='$display_format' $CURRENT_DIR/ccmonitor_tmux.sh total"
     
-    # Set the ccmonitor status string as a tmux global variable
-    set_tmux_option "@ccmonitor_status" "$ccmonitor_status"
-    
-    # Optionally set status-right if enabled (default: false)
-    local auto_status=$(get_tmux_option "@ccmonitor_auto_status" "false")
-    if [ "$auto_status" = "true" ]; then
-        local status_right=$(get_tmux_option "status-right" "")
-        if [[ "$status_right" != *"ccmonitor"* ]]; then
-            if [ -z "$status_right" ]; then
-                set_tmux_option "status-right" "$ccmonitor_status"
-            else
-                set_tmux_option "status-right" "$status_right $ccmonitor_status"
-            fi
-        fi
-    fi
+    # Set tmux variables for active and total process counts
+    set_tmux_option "@ccmonitor_active" "#($active_script)"
+    set_tmux_option "@ccmonitor_total" "#($total_script)"
 }
 
 # Load the plugin

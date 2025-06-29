@@ -63,6 +63,12 @@ main() {
                     ;;
             esac
             ;;
+        "active")
+            echo $(get_active_claude_count $CPU_THRESHOLD)
+            ;;
+        "total")
+            echo $(get_claude_process_count)
+            ;;
         "info")
             echo "Claude Code Process Information:"
             echo "================================"
@@ -82,7 +88,7 @@ main() {
             ;;
         "help")
             echo "Claude Code Monitor - Usage:"
-            echo "  $0 [status|info|test|help]"
+            echo "  $0 [status|active|total|info|test|help]"
             echo ""
             echo "Environment Variables:"
             echo "  CCMONITOR_CPU_THRESHOLD - CPU threshold for active processes (default: 1.0)"
