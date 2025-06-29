@@ -16,7 +16,7 @@ A tmux plugin that monitors Claude Code processes and displays their status in t
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/tmux-ccmonitor ~/.tmux/plugins/tmux-ccmonitor
+git clone https://github.com/yuucu/tmux-ccmonitor ~/.tmux/plugins/tmux-ccmonitor
 ```
 
 2. Add to your `~/.tmux.conf`:
@@ -33,7 +33,7 @@ tmux source-file ~/.tmux.conf
 
 1. Add plugin to your `~/.tmux.conf`:
 ```bash
-set -g @plugin 'yourusername/tmux-ccmonitor'
+set -g @plugin 'yuucu/tmux-ccmonitor'
 ```
 
 2. Install with `prefix + I`
