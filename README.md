@@ -7,7 +7,6 @@ A tmux plugin that monitors Claude Code processes and displays their status in t
 - Display count of running Claude Code processes
 - Show active vs total processes (active = processes with CPU usage above threshold)
 - Configurable CPU threshold for determining "active" processes
-- Configurable display format (simple numbers or fancy with emojis)
 - Configurable update interval
 
 ## Installation
@@ -48,9 +47,6 @@ set -g @ccmonitor_cpu_threshold "2.0"
 
 # Update interval in seconds (default: 5)
 set -g @ccmonitor_interval "3"
-
-# Display format: simple or fancy (default: simple)
-set -g @ccmonitor_display_format "fancy"
 
 # Custom status format (default: "CC:{active}/{total}")
 # Available placeholders: {active}, {total}
@@ -99,20 +95,6 @@ set -g @ccmonitor_format "Active: {active}"
 set -g @ccmonitor_format "#[fg=green]CC:{active}#[default]/{total}"
 ```
 
-## Display Formats
-
-The `display_format` configuration only affects the `status` command output:
-
-### Simple Format (default)
-- Shows `active/total` (e.g., `2/4`)
-
-### Fancy Format
-- Shows emoji indicators with counts:
-  - 🔴 `0/0` - No processes running
-  - ⚪ `0/2` - Processes running but none active
-  - 🟢 `2/4` - Some processes are active
-
-**Note:** The `display_format` setting only affects the output of the `status` command when run directly from the command line.
 
 ## Usage
 
@@ -158,7 +140,6 @@ The monitor script accepts these environment variables:
 
 - `CCMONITOR_CPU_THRESHOLD` - CPU threshold percentage (default: 1.0)
 - `CCMONITOR_UPDATE_INTERVAL` - Update interval in seconds (default: 5)
-- `CCMONITOR_DISPLAY_FORMAT` - Display format: simple|fancy (default: simple)
 
 ## Requirements
 
