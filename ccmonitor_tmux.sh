@@ -25,8 +25,8 @@ get_claude_processes_info() {
 
 # Function to display status in simple format (x/y)
 display_simple() {
-    local total=$1
-    local active=$2
+    local active=$1
+    local total=$2
     echo "${active}/${total}"
 }
 
@@ -39,7 +39,7 @@ main() {
         "status")
             local total=$(get_claude_process_count)
             local active=$(get_active_claude_count $CPU_THRESHOLD)
-            display_simple $total $active
+            display_simple $active $total
             ;;
         "active")
             echo $(get_active_claude_count $CPU_THRESHOLD)

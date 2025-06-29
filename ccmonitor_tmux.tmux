@@ -37,7 +37,6 @@ do_interpolation() {
     # Simple interpolation for all placeholders
     string="${string//\#{ccmonitor_active\}/$active_value}"
     string="${string//\#{ccmonitor_total\}/$total_value}"
-    string="${string//\#{ccmonitor_status\}/$active_value\/$total_value}"
     
     echo "$string"
 }
