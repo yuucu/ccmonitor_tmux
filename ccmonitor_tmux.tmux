@@ -8,7 +8,6 @@ CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Default values
 DEFAULT_INTERVAL="5"
 DEFAULT_CPU_THRESHOLD="1.0"
-DEFAULT_FORMAT="CC:{active}/{total}"
 
 # Get tmux option with default fallback
 get_tmux_option() {
@@ -50,15 +49,13 @@ update_tmux_option() {
     
     # Get configuration
     local cpu_threshold=$(get_tmux_option "@ccmonitor_cpu_threshold" "$DEFAULT_CPU_THRESHOLD")
-    local format=$(get_tmux_option "@ccmonitor_format" "$DEFAULT_FORMAT")
     
-    # Build the command with format
-    local ccmonitor_cmd="CCMONITOR_CPU_THRESHOLD='$cpu_threshold' CCMONITOR_FORMAT='$format' $CURRENT_DIR/ccmonitor_tmux.sh"
+    # Build the command
+    local ccmonitor_cmd="env CCMONITOR_CPU_THRESHOLD='$cpu_threshold' '$CURRENT_DIR/ccmonitor_tmux.sh'"
     
     # Replace interpolations
     local new_option_value="${option_value//\#{ccmonitor_active\}/#($ccmonitor_cmd active)}"
     new_option_value="${new_option_value//\#{ccmonitor_total\}/#($ccmonitor_cmd total)}"
-    new_option_value="${new_option_value//\#{ccmonitor_status\}/#($ccmonitor_cmd formatted)}"
     
     set_tmux_option "$option" "$new_option_value"
 }

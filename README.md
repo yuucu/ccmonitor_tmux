@@ -47,17 +47,12 @@ set -g @ccmonitor_cpu_threshold "2.0"
 
 # Update interval in seconds (default: 5)
 set -g @ccmonitor_interval "3"
-
-# Custom status format (default: "CC:{active}/{total}")
-# Available placeholders: {active}, {total}
-set -g @ccmonitor_format "🤖{active}/{total}"
 ```
 
 ### Status Bar Configuration
 
 The plugin automatically interpolates the following placeholders in your `status-left` and `status-right`:
 
-- `#{ccmonitor_status}` - Shows formatted status (default: "CC:active/total")
 - `#{ccmonitor_active}` - Shows only active process count
 - `#{ccmonitor_total}` - Shows only total process count
 
@@ -65,34 +60,13 @@ Just add these placeholders to your tmux configuration:
 
 ```bash
 # Add to status-right
-set -g status-right '🤖#{ccmonitor_status} | %Y-%m-%d %H:%M'
-
-# Or use individual values
-set -g status-right 'Claude: #{ccmonitor_active}/#{ccmonitor_total} | %H:%M'
+set -g status-right 'Claude: #{ccmonitor_active}/#{ccmonitor_total} | %Y-%m-%d %H:%M'
 
 # Add to status-left
-set -g status-left '#{ccmonitor_status} | #S'
-```
+set -g status-left 'CC:#{ccmonitor_active}/#{ccmonitor_total} | #S'
 
-#### Customizing the Format
-
-You can customize the `#{ccmonitor_status}` format using the `@ccmonitor_format` option:
-
-```bash
-# Default format
-set -g @ccmonitor_format "CC:{active}/{total}"
-
-# With emoji
-set -g @ccmonitor_format "🤖{active}/{total}"
-
-# Verbose format
-set -g @ccmonitor_format "Claude: {active} active / {total} total"
-
-# Only show active count
-set -g @ccmonitor_format "Active: {active}"
-
-# With colors (tmux formatting)
-set -g @ccmonitor_format "#[fg=green]CC:{active}#[default]/{total}"
+# With emoji and colors
+set -g status-right '🤖#{ccmonitor_active}/#{ccmonitor_total} | %H:%M'
 ```
 
 
@@ -100,13 +74,8 @@ set -g @ccmonitor_format "#[fg=green]CC:{active}#[default]/{total}"
 
 Once the plugin is loaded, it automatically replaces the placeholders in your status bar:
 
-- `#{ccmonitor_status}` - Formatted status using `@ccmonitor_format`
-- `#{ccmonitor_active}` - Raw number of active processes
-- `#{ccmonitor_total}` - Raw number of total processes
-
-The `@ccmonitor_format` option supports these placeholders:
-- `{active}` - Number of active processes (CPU > threshold)
-- `{total}` - Total number of processes
+- `#{ccmonitor_active}` - Number of active processes (CPU > threshold)
+- `#{ccmonitor_total}` - Total number of processes
 
 The status updates automatically based on your configured interval.
 
