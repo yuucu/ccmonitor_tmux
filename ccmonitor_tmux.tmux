@@ -8,7 +8,6 @@ CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Default values
 DEFAULT_INTERVAL="5"
 DEFAULT_CPU_THRESHOLD="1.0"
-DEFAULT_DISPLAY_FORMAT="simple"
 DEFAULT_FORMAT="CC:{active}/{total}"
 
 # Get tmux option with default fallback

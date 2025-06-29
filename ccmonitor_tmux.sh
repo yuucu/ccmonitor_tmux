@@ -6,7 +6,6 @@
 # Default configuration
 CPU_THRESHOLD=${CCMONITOR_CPU_THRESHOLD:-1.0}
 UPDATE_INTERVAL=${CCMONITOR_UPDATE_INTERVAL:-5}
-DISPLAY_FORMAT=${CCMONITOR_DISPLAY_FORMAT:-"simple"}
 
 # Function to get Claude Code process count
 get_claude_process_count() {
@@ -31,19 +30,6 @@ display_simple() {
     echo "${active}/${total}"
 }
 
-# Function to display status with colors and icons
-display_fancy() {
-    local total=$1
-    local active=$2
-    
-    if [ $total -eq 0 ]; then
-        echo "🔴 0/0"
-    elif [ $active -eq 0 ]; then
-        echo "⚪ ${active}/${total}"
-    else
-        echo "🟢 ${active}/${total}"
-    fi
-}
 
 # Main function
 main() {
@@ -53,15 +39,7 @@ main() {
         "status")
             local total=$(get_claude_process_count)
             local active=$(get_active_claude_count $CPU_THRESHOLD)
-            
-            case $DISPLAY_FORMAT in
-                "fancy")
-                    display_fancy $total $active
-                    ;;
-                *)
-                    display_simple $total $active
-                    ;;
-            esac
+            display_simple $total $active
             ;;
         "active")
             echo $(get_active_claude_count $CPU_THRESHOLD)
@@ -91,7 +69,6 @@ main() {
             echo "Testing Claude Code Monitor..."
             echo "CPU Threshold: ${CPU_THRESHOLD}%"
             echo "Update Interval: ${UPDATE_INTERVAL}s"
-            echo "Display Format: ${DISPLAY_FORMAT}"
             echo ""
             main "info"
             ;;
@@ -102,7 +79,6 @@ main() {
             echo "Environment Variables:"
             echo "  CCMONITOR_CPU_THRESHOLD - CPU threshold for active processes (default: 1.0)"
             echo "  CCMONITOR_UPDATE_INTERVAL - Update interval in seconds (default: 5)"
-            echo "  CCMONITOR_DISPLAY_FORMAT - Display format: simple|fancy (default: simple)"
             ;;
         *)
             echo "Unknown action: $action"
