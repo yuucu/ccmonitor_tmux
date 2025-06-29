@@ -37,7 +37,7 @@ main() {
     local display_format=$(get_tmux_option "@ccmonitor_display_format" "$DEFAULT_DISPLAY_FORMAT")
     
     # Set script path with environment variables
-    local script_path="CCMONITOR_CPU_THRESHOLD='$cpu_threshold' CCMONITOR_DISPLAY_FORMAT='$display_format' $CURRENT_DIR/ccmonitor.sh status"
+    local script_path="CCMONITOR_CPU_THRESHOLD='$cpu_threshold' CCMONITOR_DISPLAY_FORMAT='$display_format' $CURRENT_DIR/ccmonitor_tmux.sh status"
     
     # Update tmux status bar update interval
     local current_interval=$(get_tmux_option "status-interval" "15")
